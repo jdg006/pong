@@ -1,6 +1,15 @@
 var canvas = document.getElementById('myCanvas');
 var context = canvas.getContext('2d');
 
+var step = function (){
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    render();
+    animate(step);
+}
+
+var animate = window.requestAnimationFrame ||
+              function(step) { window.setTimeout(step, 1000/60) };
+
 var player = new Player('joe');
 var computer = new Computer();
 var ball = new Ball();
@@ -48,14 +57,14 @@ function render(){
   ball.render();
 
 }
- window.onload = function(){
-   render();
- }
+
 
 Paddle.prototype.render = function(){
+    context.beginPath();
     context.rect(this.x, this.y, this.width, this.height)
     context.fillStyle = 'black';
     context.fill();
+    context.stroke();
 
 };
 Player.prototype.render = function(){
@@ -74,3 +83,32 @@ Ball.prototype.render = function(){
   context.strokeStyle = '#003300';
   context.stroke();
 };
+
+Paddle.prototype.move = function(direction){
+  if (direction === 0){
+    this.y -= 10
+  }
+  else{
+    this.y += 10
+  }
+
+};
+
+window.onload = function(){
+   animate(step);
+ }
+
+window.addEventListener('keydown', function(event){
+  var key =  event.keyCode;
+  if (key === 38 ){
+    if(player.paddle.y != 0){
+      player.paddle.move(0);
+    }
+  }
+  else if (key === 40){
+    if (player.paddle.y != 100){
+    player.paddle.move(1)
+  }
+}
+
+});
